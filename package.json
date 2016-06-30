@@ -1,5 +1,6 @@
 {
   "name": "local-redux",
+  "description": "Isolated local state for React container components using Redux",
   "version": "0.1.0",
   "main": "lib/index.js",
   "files": [
