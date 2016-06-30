@@ -1,0 +1,65 @@
+{
+  "name": "local-redux",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    "build": "npm run check && npm run build:lib",
+    "build:lib": "./node_modules/.bin/babel src --out-dir lib",
+    "check": "npm run lint",
+    "lint": "./node_modules/.bin/eslint src/",
+    "preversion": "npm run check",
+    "version": "npm run build:lib",
+    "postversion": "git push && git push --tags",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HansDP/local-redux.git"
+  },
+  "keywords": [
+    "react",
+    "flux",
+    "redux",
+    "local state",
+    "container state",
+    "react container",
+    "container"
+  ],
+  "author": "Hans De Potter <hans_de_potter@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HansDP/local-redux/issues"
+  },
+  "engines": {
+    "node": ">=5.0.0",
+    "npm": ">=3.0.0"
+  },
+  "homepage": "https://github.com/HansDP/local-redux",
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-eslint": "^6.0.4",
+    "babel-plugin-transform-runtime": "^6.7.5",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^2.9.0",
+    "eslint-plugin-import": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^1.2.0",
+    "eslint-plugin-react": "^5.0.1"
+  },
+  "dependencies": {
+    "warning": "^3.0.0",
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "react-redux": "^4.0.0",
+    "redux": "^3.3.1"
+  },
+  "author": "Hans De Potter <hans_de_potter@hotmail.com>",
+  "license": "MIT"
+}
