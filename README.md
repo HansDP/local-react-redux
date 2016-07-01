@@ -18,11 +18,9 @@ There are however some key differences to `redux-elm`:
 
 ## The Gist
 
-We are working on documentation and examples. 
+We are working on documentation. Please stay tuned. 
 
-Please stay tuned. 
-
-For the moment, take a look at the code sample below, it should give you an idea of how it will look like.
+For the moment, take a look at the code sample below, it should give you an idea of how it will look like. Or have a look at the examples.
 
 #### Counter
 
@@ -86,7 +84,14 @@ export default (state = { counter: 0 }, action) => {
 
 ## Examples
 
-*Coming up*
+* [Counter](https://github.com/HansDP/local-redux/tree/master/examples/counter)  
+  Shows a simple example to showcase the basics
+* [Pair of counters](https://github.com/HansDP/local-redux/tree/master/examples/pair-of-counters)  
+  Shows how to achieve composition with local state
+* [Dynamic list of counters](https://github.com/HansDP/local-redux/tree/master/examples/list-of-counters)  
+  Shows how to achieve dynamic composition
+
+*More examples are coming up*
 
 
 ## Installation & Usage
