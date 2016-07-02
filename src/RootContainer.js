@@ -26,11 +26,14 @@ class RootContainer extends React.Component {
         // Get the Redux store's (global) dispatch method. 
         // This is passed in by react-redux mapDispatchToProps
     	const { dispatch } = props // 
+        const getGlobalState = () => this.props.reduxState
 
-        this.fullKey = `${LOCAL_REDUX}/`
+        this.fullKey = LOCAL_REDUX
         this.childReducers = {}
         this.dispatch = createLocalDispatch(this.fullKey, dispatch)
-        this.globalDispatch = dispatch
+        this.getState = () => getGlobalState()
+        this.getState.global = getGlobalState
+        // this.dispatch.global = dispatch
 		this.registerChildReducer = createRegisterChildReducer(this.childReducers)
 		this.unregisterChildReducer = createUnregisterChildReducer(this.childReducers)
 
@@ -40,7 +43,7 @@ class RootContainer extends React.Component {
                 requiresLocalReduce = false
                 setTimeout(() => {
                     requiresLocalReduce = true
-                    this.dispatch({ type: 'CONTAINER_MOUNT' })
+                    dispatch({ type: '@@LOCAL_REDUX_CONTAINER_MOUNT' })
                 }, 0)
             }
         }
@@ -62,25 +65,7 @@ class RootContainer extends React.Component {
     }
 
     localReduce = (state, action) => {
-
         const { childReducers } = this
-
-        action = { 
-            raw: action
-        }
-
-        // check if this is a local action
-        if (action.raw.type.indexOf(LOCAL_REDUX) === 0) {
-            const lastIndex = action.raw.type.lastIndexOf('->')
-            if (lastIndex !== -1) {
-                action = {
-                    ...action,
-                    type: action.raw.type.substr(lastIndex + 2),
-                    target: action.raw.type.substr(0, lastIndex + 2)
-                }
-            }
-        }
-
         return reduceChildren(state, childReducers, action)
     };
 

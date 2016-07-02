@@ -1,1 +1,1 @@
-export const LOCAL_REDUX = '@@LOCAL_REDUX'
+export const LOCAL_REDUX = '@@LOCAL_REDUX/'

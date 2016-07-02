@@ -5,6 +5,6 @@ export default PropTypes.shape({
 	registerChildReducer: PropTypes.func.isRequired,
 	unregisterChildReducer: PropTypes.func.isRequired,
 	dispatch: PropTypes.func.isRequired,
-	globalDispatch: PropTypes.func.isRequired,
+	getState: PropTypes.func.isRequired,
 	onContainerDidMount: PropTypes.func.isRequired
 })

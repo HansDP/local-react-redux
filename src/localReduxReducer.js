@@ -1,5 +1,3 @@
-import { LOCAL_REDUX } from './constants'
-
 let rootReducer = null
 
 export default (state = {}, action) => {

@@ -14,7 +14,7 @@ const defaultStateGraph = {
 
 export default (reducer, mapStateToProps) => {
 
-    const initialReducerState = reducer(undefined, { type: LOCAL_REDUX + '/DETERMINE_ININITAL_STATE'})
+    const initialReducerState = reducer(undefined, { type: LOCAL_REDUX + 'DETERMINE_ININITAL_STATE'})
 
     return (View) => class HocView extends Component {
 
@@ -43,12 +43,16 @@ export default (reducer, mapStateToProps) => {
             this.localKey = props.localKey
             this.childReducers = {}
 
+            // // TODO: what if the original state-graph has some state (like server-side rendered state graph)
+            // this.state = { localState: initialReducerState }
+
             // parentReduxShape interface
             this.fullKey = parentRedux.fullKey + this.localKey + '->'
-            this.dispatch = createLocalDispatch(this.fullKey, parentRedux.globalDispatch)
+            this.getState = () => (this.lastState && this.lastState.local) || initialReducerState
+            this.getState.global = parentRedux.getState.global
+            this.dispatch = createLocalDispatch(this.fullKey, parentRedux.dispatch.global)
             this.registerChildReducer = createRegisterChildReducer(this.childReducers)
             this.unregisterChildReducer = createUnregisterChildReducer(this.childReducers)
-            this.globalDispatch = parentRedux.globalDispatch
             this.onContainerDidMount = parentRedux.onContainerDidMount
         }
 
@@ -104,14 +108,19 @@ export default (reducer, mapStateToProps) => {
             const initialState = (state || this.lastState || defaultStateGraph)
             const { local, children = defaultStateGraph.children } = initialState
 
+            const { type } = action
+            const isLocalAction = type && type.indexOf(LOCAL_REDUX) === 0
+            const isActionForSubtree = !isLocalAction || type.indexOf(fullKey) === 0
+            const isActionForReducer = !isLocalAction || !isActionForSubtree || type.indexOf('->', fullKey.length) === -1 // is local type containing an action-type for this reducer?
+
             // Check if this action is intended for this container (the additional information
             // has been added by the RootContainer).
-            const localAction = action.target === fullKey
-                                    ? { ...action.raw, isLocal: true, type: action.type, globalType: action.raw.type, }
-                                    : action.raw
+            const localAction = isLocalAction && isActionForSubtree && isActionForReducer
+                                    ? { ...action, type: type.substr(fullKey.length), globalType: type }
+                                    : action
             
             // Ask the reducer to reduce
-            const newLocalState = reducer(local, localAction)
+            const newLocalState = (!isLocalAction || (isActionForSubtree && isActionForReducer)) ? reducer(local, localAction) : local
             
             // Update the state, if changed. To accomodate for immutability.
             if (local !== newLocalState) {
@@ -122,7 +131,7 @@ export default (reducer, mapStateToProps) => {
             }
 
             // Reduce all the registered children.
-            const newChildrenState = reduceChildren(children, this.childReducers, action)
+            const newChildrenState = (!isLocalAction || isActionForSubtree) ? reduceChildren(children, this.childReducers, action) : children
             // Update the state, if changed. To accomodate for immutability.
             if (newChildrenState !== children) {
                 state = {
@@ -133,8 +142,13 @@ export default (reducer, mapStateToProps) => {
             
             // local and children state is finialized. If anything changed, we need to 
             // update UI.
+
             this.stateNotChanged = initialState === state
 
+            // if (!this.stateNotChanged) {
+            //     this.setState({ localState: state })
+            // }
+            
             // Last reduced state. We can re-use this in the render phase.
             this.lastState = state
 
