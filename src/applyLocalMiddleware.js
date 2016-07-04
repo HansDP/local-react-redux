@@ -19,18 +19,18 @@ export default (...middlewares) => {
 	return (createContainer) => (reducer, mapStateToProps) => (View) => createContainer(reducer, mapStateToProps)(class ViewWithMiddleware extends Component {
 
 		static contextTypes = {
-            parentRedux: parentReduxShape.isRequired
-        };
+			parentRedux: parentReduxShape.isRequired
+		};
 
-        static childContextTypes = {
-            parentRedux: parentReduxShape.isRequired
-        };
+		static childContextTypes = {
+			parentRedux: parentReduxShape.isRequired
+		};
 
-        getChildContext() {
-            return {
-                parentRedux: this.parentRedux
-            }
-        }
+		getChildContext() {
+			return {
+				parentRedux: this.parentRedux
+			}
+		}
 
 		constructor(props, context) {
 			super(props, context)

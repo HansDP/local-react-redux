@@ -1,0 +1,9 @@
+// Place your settings in this file to overwrite default and user settings.
+{ 
+    "workbench.editor.showTabs": true,
+    "workbench.editor.openPositioning": "left",
+    "workbench.editor.enablePreview": true,
+
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false
+}

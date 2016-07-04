@@ -13,5 +13,8 @@
     "no-else-return": 0,
     "semi": ["error", "never"]
   },
+  "ecmaFeatures": {
+    "jsx": true
+  },
   "plugins": ["react"]
 }
