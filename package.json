@@ -1,7 +1,7 @@
 {
   "name": "local-react-redux",
   "description": "Isolated local state for React container components using Redux",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "files": [
     "lib",
@@ -60,7 +60,5 @@
     "react-dom": "^15.0.2",
     "react-redux": "^4.0.0",
     "redux": "^3.3.1"
-  },
-  "author": "Hans De Potter <hans_de_potter@hotmail.com>",
-  "license": "MIT"
+  }
 }
