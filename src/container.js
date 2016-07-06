@@ -1,4 +1,5 @@
 import warning from 'warning'
+import { bindActionCreators } from 'redux'
 import { createElement, Component, PropTypes } from 'react'
 
 import { LOCAL_REDUX } from './constants'
@@ -7,12 +8,20 @@ import createLocalDispatch from './utils/createLocalDispatch'
 import reduceChildren from './utils/reduceChildren'
 import createRegisterChildReducer from './utils/createRegisterChildReducer'
 import createUnregisterChildReducer from './utils/createUnregisterChildReducer'
+import createGetChildState from './utils/createGetChildState'
 
-const defaultStateGraph = {
-	children: {}
-}
+const noChildren = {}
 
-export default (reducer, mapStateToProps) => {
+export default (reducer, mapStateToProps, mapDispatchToProps) => { // , mapDispatchToProps
+
+	mapStateToProps = mapStateToProps || (() => null)
+
+	let finalMapDispatchToProps = 
+		typeof mapDispatchToProps === 'function'
+			? mapDispatchToProps // it is a function -> use as is
+			: !mapDispatchToProps
+				? (dispatch) => ({ dispatch }) // no mapDispatchToProps specified, use the default
+				: (dispatch) => bindActionCreators(mapDispatchToProps, dispatch) // it is an object, bind it to dispatch.
 
 	const initialReducerState = reducer(undefined, { type: LOCAL_REDUX + 'DETERMINE_ININITAL_STATE'})
 
@@ -42,18 +51,22 @@ export default (reducer, mapStateToProps) => {
 
 			this.localKey = props.localKey
 			this.childReducers = {}
-
-			// TODO: what if the original state-graph has some state (like server-side rendered state graph)
-			this.state = { container: { local: initialReducerState, children: {} } }
+			// Ask the parent for the initial state
+			this.state = {
+				// children: {},
+				local: initialReducerState,
+				...parentRedux.getChildState(this.localKey)
+			} //  { container: { local: initialReducerState, children: {} } }
 
 			// parentReduxShape interface
 			this.fullKey = parentRedux.fullKey + this.localKey + '->'
-			this.getState = () => this.state.container.local
+			this.getState = () => this.state.local
 			this.getState.global = parentRedux.getState.global
 			this.dispatch = createLocalDispatch(this.fullKey, parentRedux.dispatch.global)
-			this.registerChildReducer = createRegisterChildReducer(this.childReducers)
-			this.unregisterChildReducer = createUnregisterChildReducer(this.childReducers)
-			this.onContainerDidMount = parentRedux.onContainerDidMount
+			this.registerChildReducer = createRegisterChildReducer(this)
+			this.unregisterChildReducer = createUnregisterChildReducer(this)
+			this.onChildMountChanged = parentRedux.onChildMountChanged
+	        this.getChildState = createGetChildState(this)
 		}
 
 		componentWillMount() {
@@ -64,59 +77,54 @@ export default (reducer, mapStateToProps) => {
 			// Notify the RootContainer that a new child-container is about to be added.
 			// This is required to be able to reduce the complete local state again (with
 			// this new addition).
-			this.onContainerDidMount()
+			this.onChildMountChanged()
 		}
 
 		componentWillUnmount() {
 			const { parentRedux } = this.context
 			parentRedux.unregisterChildReducer(this.localKey, this.localReduce)   
 
-			// TODO: Test this:
 			// Notify the RootContainer that a new child-container is about to be removed.
 			// This is required to be able to reduce the complete local state again (with)
 			// this removal). 
-			// this.lastState = null
 			this.localReduce = () => null
-			this.onContainerDidMount()
+			this.onChildMountChanged() // TODO: name should be 'unmount'
 		}
 
 		render() {
 			const { parentRedux } = this.context
 			const { dispatch, props } = this
 
-// if (!this.reduced) return null 
-
+		// TODO: review comment
 			// If the render() method is hit the first time, the localReduce() method will not 
-			// have been executed yet (that happens in the onContainerDidMount() of the
+			// have been executed yet (that happens in the onChildMountChanged() of the
 			// RootContainer, but that method waits until all children have been mounted -- to
 			// optimize the amount of localReduce calls in the complete tree)
 			//
 			// But, we know the state is such a case: it is the reducer's initial state.
-			//
-			// const state = this.lastState 
-			//				 ? this.lastState.local 
-			//				 : initialReducerState
-			const state = this.state.container.local
+
+			const localState = this.getState()
 
 			return createElement(View, {
-				...mapStateToProps(state, props),
-				...props,
-				dispatch
+				...mapStateToProps(localState, props),
+				...finalMapDispatchToProps(dispatch, props),
+				...props
 			})
 		}
 
-		localReduce = (state, action) => {
+		localReduce = (state = { local: initialReducerState }, action) => {
 
 // this.reduced = true
 
 			const { fullKey, childReducers } = this
-			const initialState = (state || this.state.container.local )
-			const { local, children = defaultStateGraph.children } = initialState
+			const { local, children } = state
 
 			const { type } = action
 			const isLocalAction = type && type.indexOf(LOCAL_REDUX) === 0
 			const isActionForSubtree = !isLocalAction || type.indexOf(fullKey) === 0
 			const isActionForReducer = !isLocalAction || !isActionForSubtree || type.indexOf('->', fullKey.length) === -1 // is local type containing an action-type for this reducer?
+
+			warning(isLocalAction && isActionForSubtree && isActionForReducer && action.globalType, 'An action is being dispatched which has a property \'globalType\'. This is a reserved key for a local-react-redux container and will be overwritten.')
 
 			// Check if this action is intended for this container (the additional information
 			// has been added by the RootContainer).
@@ -136,7 +144,11 @@ export default (reducer, mapStateToProps) => {
 			}
 
 			// Reduce all the registered children.
-			const newChildrenState = (!isLocalAction || isActionForSubtree) ? reduceChildren(children, this.childReducers, action) : children
+
+			// Make sure to only use child-state of children that are still alive.
+			const finalChildrenState = removeUnmountedChildState(children, this.childReducers)
+
+			const newChildrenState = (!isLocalAction || isActionForSubtree) ? reduceChildren(finalChildrenState || noChildren, this.childReducers, action) : children
 			// Update the state, if changed. To accomodate for immutability.
 			if (newChildrenState !== children) {
 				state = {
@@ -147,20 +159,16 @@ export default (reducer, mapStateToProps) => {
 			
 			// local and children state is finialized. If anything changed, we need to 
 			// update UI.
-
-			// this.stateNotChanged = initialState === state
-
-			if (initialState !== state) {
-				this.setState({ container: state })
+			if (this.state.local !== state.local || this.state.children !== state.children) {
+				this.setState(state)
 			}
-			// // Last reduced state. We can re-use this in the render phase.
-			// this.lastState = state
 
 			return state
 		};
 
 		shouldComponentUpdate(nextProps, nextState) {
-			if (nextState.container.local !== this.state.container.local) {
+			// Only local state is important (child-containers will handle their own update-logic -- same method of course)
+			if (nextState.local !== this.state.local) {
 				return true
 			}
 			// Accomodate for properties that come in (e.g. a higher-order connect() of Redux)
@@ -169,3 +177,24 @@ export default (reducer, mapStateToProps) => {
 		}
 	}
 }
+
+const removeUnmountedChildState = (children, childReducers) => {
+	if (!children) {
+		return children
+	}
+
+	let isDifferent = false
+
+	const updatedChildren = Object.keys(children).reduce((state, childkey) => {
+		if (childReducers[childkey]) {
+			state[childkey] = children[childkey]
+		} else {
+			isDifferent = true
+		}
+		return state
+	}, {})
+
+	return isDifferent ? updatedChildren : children
+}
+
+
