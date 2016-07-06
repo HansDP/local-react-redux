@@ -1,11 +1,12 @@
-import localReduxReducer from './localReduxReducer'
-import container from './container'
+import applyContainerMiddleware from './applyContainerMiddleware'
+import createContainer from './createContainer'
+import containersReducer from './containersReducer'
 import RootContainer from './RootContainer'
-import applyLocalMiddleware from './applyLocalMiddleware'
 
 export {
-	applyLocalMiddleware,
-	localReduxReducer,
-	container,
+	applyContainerMiddleware,
+	containersReducer,
 	RootContainer
 }
+
+export default createContainer

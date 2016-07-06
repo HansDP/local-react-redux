@@ -28,17 +28,17 @@ For the moment, take a look at the code sample below, it should give you an idea
 
 If you have ever user Redux with React, the container component will be very familiar. And that is by choice: you should be able to create local containers with the skillset you gained when you started using Redux and React.
 
-The main difference is that your component must be wrapped with a higher-order component: a `container()`
+The main difference is that your component must be enhanced with a higher-order component, using `connectContainer()`.
 
-The `container()` takes two arguments:
+The `connectContainer()` method takes three arguments:
 
-1. The reducer for this container component.
-2. How local state is mapped to props of your React component.
-
+1. `reducer` (*Function*): The reducer for this container component.
+2. [`mapStateToProps`] \(*Function*): Optional function, which specifies how local state is mapped to props of your React component.
+2. [`mapDisptachToProps`] \(*Function*): Optional function, which specifies how the local `dispatch` method is mapped to props of your React component.
 
 ```javascript
 import React from 'react'
-import { container } from 'local-react-redux'
+import connectContainer from 'local-react-redux'
 
 import reducer from './reducer'
 
@@ -48,7 +48,9 @@ const mapStateToProps = (localState, ownProps) => {
   }
 }
 
-export default container(reducer, mapStateToProps)(({ dispatch, counter }) => (
+// TODO: show example of mapDisptachToProps
+
+export default connectContainer(reducer, mapStateToProps)(({ dispatch, counter }) => (
   <div>
     <div>
       <div>Count: { counter }</div>

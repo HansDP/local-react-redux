@@ -1,5 +1,5 @@
 import React from 'react'
-import { container } from 'local-react-redux'
+import connectContainer from 'local-react-redux'
 
 import reducer from './reducer'
 
@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => {
 	}
 }
 
-export default container(reducer, mapStateToProps)(({ dispatch, counter }) => (
+export default connectContainer(reducer, mapStateToProps)(({ dispatch, counter }) => (
 	<div>
 		<button onClick={() => dispatch({ type: 'DECREMENT_COUNTER' })}>-</button>
 		<div style={countStyle}>{counter}</div> 

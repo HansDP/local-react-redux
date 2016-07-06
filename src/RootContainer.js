@@ -1,7 +1,7 @@
 import React, { Children, PropTypes } from 'react'
 import { connect } from 'react-redux'
 
-import { registerRootReducer, unregisterRootReducer } from './localReduxReducer'
+import { registerRootReducer, unregisterRootReducer } from './containersReducer'
 import { LOCAL_REDUX } from './constants'
 import parentReduxShape from './parentReduxShape'
 import createLocalDispatch from './utils/createLocalDispatch'
@@ -36,7 +36,6 @@ class RootContainer extends React.Component {
 		this.dispatch = createLocalDispatch(this.fullKey, dispatch)
 		this.getState = () => getGlobalState()
 		this.getState.global = getGlobalState
-		// this.dispatch.global = dispatch
 		this.registerChildReducer = createRegisterChildReducer(this)
 		this.unregisterChildReducer = createUnregisterChildReducer(this)
         this.getChildState = createGetChildState(this)
@@ -47,6 +46,9 @@ class RootContainer extends React.Component {
 				requiresLocalReduce = false
 				setTimeout(() => {
 					requiresLocalReduce = true
+					// Action type is bogus. It is just triggering a new 
+					// hit on the reducers, to update redux with the new
+					// state of the children.
 					dispatch({ type: '@@LOCAL_REDUX_CHILDCONTAINERS_MOUNT' })
 				}, 0)
 			}
@@ -61,6 +63,13 @@ class RootContainer extends React.Component {
 
 	componentWillMount() {
 		registerRootReducer(this.localReduce)
+
+		// Action type is bogus. It is just triggering a new 
+		// hit on the reducers, to get the initial state for this root.
+		// TODO: maybe need to integrate with onChildMountChanged (to only have
+		// one reduce-hit). Or get the initial state from 'global state' (but what 
+		// is the key in the state graph (the root reducer knows)? maybe 
+		// rootcontainer needs a required prop 'stateKey')
         const { dispatch } = this.props
         dispatch({ type: '@@LOCAL_REDUX_ROOTCONTAINER_MOUNT' })
 	}

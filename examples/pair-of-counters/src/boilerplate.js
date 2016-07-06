@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { createStore, compose, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
 
-import { localReduxReducer, RootContainer } from 'local-react-redux'
+import { containersReducer, RootContainer } from 'local-react-redux'
 
 export default (containerDomId, Container) => {
   const storeFactory = compose(
@@ -11,7 +11,7 @@ export default (containerDomId, Container) => {
   )(createStore)
 
   const store = storeFactory(combineReducers({
-    localRedux: localReduxReducer
+    containers: containersReducer
   }))
 
   render((

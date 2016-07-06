@@ -1,5 +1,10 @@
 let rootReducer = null
 
+// TODO: find a way to be able to register a root-container, instead of having only one.
+
+/**
+ * The redux reducer that handles all container states.
+ */
 export default (state = {}, action) => {
 	if (rootReducer) {
 		return rootReducer(state, action)
