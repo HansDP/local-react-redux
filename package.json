@@ -1,5 +1,5 @@
 {
-  "name": "local-redux",
+  "name": "local-react-redux",
   "description": "Isolated local state for React container components using Redux",
   "version": "0.1.0",
   "main": "lib/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HansDP/local-redux.git"
+    "url": "git+https://github.com/HansDP/local-react-redux.git"
   },
   "keywords": [
     "react",
@@ -34,13 +34,13 @@
   "author": "Hans De Potter <hans_de_potter@hotmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HansDP/local-redux/issues"
+    "url": "https://github.com/HansDP/local-react-redux/issues"
   },
   "engines": {
     "node": ">=5.0.0",
     "npm": ">=3.0.0"
   },
-  "homepage": "https://github.com/HansDP/local-redux",
+  "homepage": "https://github.com/HansDP/local-react-redux",
   "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",

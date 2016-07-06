@@ -1,5 +1,5 @@
 import React from 'react'
-import { container } from 'local-redux'
+import { container } from 'local-react-redux'
 
 import reducer from './reducer'
 

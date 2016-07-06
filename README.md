@@ -1,4 +1,4 @@
-# [local-redux](https://github.com/HansDP/local-redux)
+# [local-react-redux](https://github.com/HansDP/local-react-redux)
 
 This project enables you to work with local ([React](https://facebook.github.io/react/)) container component state, using one global [Redux](https://github.com/reactjs/redux/) store.
 
@@ -8,12 +8,12 @@ In Redux, state is considered global. That makes it hard to create isolated and 
 
 #### Influences
 
-Most of the inspiration was found in the ideas of [redux-elm](http://salsita.github.io/redux-elm/). Because `local-redux` is influenced by `redux-elm`, which is in its term highly influenced by [The Elm Architecture](https://github.com/evancz/elm-architecture-tutorial/), a lot of concepts will be familiar to both projects.
+Most of the inspiration was found in the ideas of [redux-elm](http://salsita.github.io/redux-elm/). Because `local-react-redux` is influenced by `redux-elm`, which is in its term highly influenced by [The Elm Architecture](https://github.com/evancz/elm-architecture-tutorial/), a lot of concepts will be familiar to both projects.
 
 There are however some key differences to `redux-elm`: 
 
 1. This library avoids opinions about specific implementations of Side Effects.
-2. In Redux world, you create [Reducers](http://redux.js.org/docs/basics/Reducers.html), which  specify the application state in response of an action. With [local-redux](https://github.com/HansDP/local-redux), local reducers are no different.
+2. In Redux world, you create [Reducers](http://redux.js.org/docs/basics/Reducers.html), which  specify the application state in response of an action. With [local-react-redux](https://github.com/HansDP/local-react-redux), local reducers are no different.
 
 
 ## The Gist
@@ -38,7 +38,7 @@ The `container()` takes two arguments:
 
 ```javascript
 import React from 'react'
-import { container } from 'local-redux'
+import { container } from 'local-react-redux'
 
 import reducer from './reducer'
 
@@ -84,11 +84,11 @@ export default (state = { counter: 0 }, action) => {
 
 ## Examples
 
-* [Counter](https://github.com/HansDP/local-redux/tree/master/examples/counter)  
+* [Counter](https://github.com/HansDP/local-react-redux/tree/master/examples/counter)  
   Shows a simple example to showcase the basics
-* [Pair of counters](https://github.com/HansDP/local-redux/tree/master/examples/pair-of-counters)  
+* [Pair of counters](https://github.com/HansDP/local-react-redux/tree/master/examples/pair-of-counters)  
   Shows how to achieve composition with local state
-* [Dynamic list of counters](https://github.com/HansDP/local-redux/tree/master/examples/list-of-counters)  
+* [Dynamic list of counters](https://github.com/HansDP/local-react-redux/tree/master/examples/list-of-counters)  
   Shows how to achieve dynamic composition
 
 *More examples are coming up*
@@ -96,8 +96,8 @@ export default (state = { counter: 0 }, action) => {
 
 ## Installation & Usage
 
-You can install `local-redux` via npm.
+You can install `local-react-redux` via npm.
 
 ```
-npm install local-redux --save
+npm install local-react-redux --save
 ```

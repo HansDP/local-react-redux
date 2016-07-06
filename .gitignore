@@ -6,3 +6,5 @@ coverage
 _book
 *.bat
 testexample
+.vscode
+.idea

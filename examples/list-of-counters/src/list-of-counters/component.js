@@ -1,6 +1,6 @@
 import React from 'react'
 import Counter from '../counter/container'
-import { container } from 'local-redux'
+import { container } from 'local-react-redux'
 import reducer from './reducer'
 
 const mapStateToProps = (state, ownProps) => {
