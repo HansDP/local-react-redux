@@ -1,5 +1,5 @@
 import applyContainerMiddleware from './applyContainerMiddleware'
-import createContainer from './createContainer'
+import connectContainer from './connectContainer'
 import containersReducer from './containersReducer'
 import RootContainer from './RootContainer'
 
@@ -9,4 +9,4 @@ export {
 	RootContainer
 }
 
-export default createContainer
+export default connectContainer
