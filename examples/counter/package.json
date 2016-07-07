@@ -16,7 +16,7 @@
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
-    "local-react-redux": "^0.1.0",
+    "local-react-redux": "^0.1.3",
     "warning": "^3.0.0",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
