@@ -141,7 +141,7 @@ export default (reducer, mapStateToProps, mapDispatchToProps) => { // , mapDispa
 			const isActionForSubtree = !isLocalAction || type.indexOf(fullKey) === 0
 			const isActionForReducer = !isLocalAction || !isActionForSubtree || type.indexOf('->', fullKey.length) === -1 // is local type containing an action-type for this reducer?
 
-			warning(isLocalAction && isActionForSubtree && isActionForReducer && action.globalType, 'An action is being dispatched which has a property \'globalType\'. This is a reserved key for a local-react-redux container and will be overwritten.')
+			warning((isLocalAction && isActionForSubtree && isActionForReducer) || !action.globalType, 'An action is being dispatched which has a property \'globalType\'. This is a reserved key for a local-react-redux container and will be overwritten.')
 
 			// Check if this action is intended for this container (the additional information
 			// has been added by the RootContainer).
